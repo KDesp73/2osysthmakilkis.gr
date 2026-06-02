@@ -39,7 +39,7 @@
       },
       {
         "path": "/content/images/Ομάδα/Αφίσα_0703.jpg",
-        "index": 4
+        "index": 7
       }
     ]
   },
@@ -49,28 +49,18 @@
     "images": [
       {
         "path": "/content/images/2024-25/IMG_1129.jpeg",
-        "index": 7
-      },
-      {
-        "path": "/content/images/2024-25/IMG_1056.jpeg",
         "index": 8
       },
       {
-        "path": "/content/images/2024-25/compressed_IMG_1330.jpeg",
+        "path": "/content/images/2024-25/IMG_1056.jpeg",
         "index": 9
       },
       {
-        "path": "/content/images/2024-25/IMG_1276.jpeg",
+        "path": "/content/images/2024-25/compressed_IMG_1330.jpeg",
         "index": 10
-      }
-    ]
-  },
-  {
-    "name": "Εκδηλώσεις -  Δράσεις",
-    "date": "2026-01-21",
-    "images": [
+      },
       {
-        "path": "/content/images/Εκδηλώσεις---Δράσεις/498eb7a5-15e5-4a85-8eee-a34e04fad77f.jpg",
+        "path": "/content/images/2024-25/IMG_1276.jpeg",
         "index": 11
       }
     ]
