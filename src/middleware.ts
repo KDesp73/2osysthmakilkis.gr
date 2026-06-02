@@ -1,26 +1,23 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { verifySessionToken } from "@/lib/auth/verify-session-token";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const token = req.cookies.get("authToken")?.value;
-  if (!token || !JWT_SECRET) {
+  if (!token) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { role: string };
-    if (decoded.role !== "admin" && decoded.role !== "user") {
-      return NextResponse.redirect(new URL("/admin/login", req.url));
-    }
-    return NextResponse.next();
-  } catch {
-    return NextResponse.redirect(new URL("/admin/login", req.url));
+  const session = await verifySessionToken(token);
+  if (!session) {
+    const response = NextResponse.redirect(new URL("/admin/login", req.url));
+    response.cookies.delete("authToken");
+    return response;
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/dashboard/:path*"],
+  matcher: ["/admin/dashboard", "/admin/dashboard/:path*"],
 };

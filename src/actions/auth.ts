@@ -55,7 +55,7 @@ export async function login(
       expiresIn: "1h",
     });
     await setAuthCookie(token);
-    redirect("/admin/dashboard");
+    return { success: true };
   }
 
   try {
@@ -79,7 +79,7 @@ export async function login(
       expiresIn: "1h",
     });
     await setAuthCookie(token);
-    redirect("/admin/dashboard");
+    return { success: true };
   } catch (err) {
     console.error("DB error:", err);
     return { success: false, error: "Server error" };

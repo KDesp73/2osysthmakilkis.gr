@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -13,22 +14,40 @@ import { Shield } from "lucide-react";
 const initialState: LoginState = { success: false };
 
 export default function AdminLogin() {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(login, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      router.replace("/admin/dashboard");
+      router.refresh();
+    }
+  }, [state.success, router]);
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="relative hidden lg:flex flex-col justify-between bg-primary p-10 text-primary-foreground overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/banner.jpg')] bg-cover bg-center opacity-20" />
+        <Image
+          src="/banner.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover opacity-25"
+          sizes="50vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-primary/80" />
+
         <div className="relative z-10">
           <Image
             src="/logo.webp"
             alt="2ο Σύστημα Προσκόπων Κιλκίς"
             width={200}
-            height={50}
-            className="brightness-0 invert"
+            height={151}
+            priority
+            className="h-auto w-[200px] brightness-0 invert"
           />
         </div>
+
         <div className="relative z-10 space-y-4 max-w-md">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
             <Shield className="h-6 w-6" />
@@ -40,6 +59,7 @@ export default function AdminLogin() {
             Διαχειριστείτε άρθρα, εικόνες και αρχεία του συστήματος με ασφάλεια.
           </p>
         </div>
+
         <p className="relative z-10 text-sm text-primary-foreground/70">
           <Link href="/" className="underline-offset-4 hover:underline">
             ← Επιστροφή στην ιστοσελίδα
@@ -54,8 +74,9 @@ export default function AdminLogin() {
               src="/logo.webp"
               alt="2ο Σύστημα"
               width={160}
-              height={40}
-              className="mx-auto"
+              height={121}
+              priority
+              className="mx-auto h-auto w-[160px]"
             />
             <Link
               href="/"
