@@ -42,46 +42,49 @@ export default function Departments() {
   };
 
   return (
-    <div className="p-6">
-      {/* Banner */}
+    <div className="space-y-10">
       <Banner title="Τα τμήματά μας" />
 
-      {/* Departments List */}
-      <div className="grid md:grid-cols-2 gap-6 mb-12">
+      <div className="grid gap-6 md:grid-cols-2">
         {departments.map((dep) => (
-          <div
+          <article
             key={dep.name}
-            className="bg-white shadow-md rounded-xl p-6 flex flex-col"
+            className="flex flex-col rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
           >
-            <h2 className="text-2xl font-semibold mb-2">{dep.name}</h2>
-            <p className="text-gray-700 mb-1">
-              <strong>Ηλικίες:</strong> {dep.ages}
-            </p>
-            <p className="text-gray-700 mb-1">
-              <strong>Συγκεντρώσεις:</strong> {dep.schedule}
-            </p>
-            <div className="mt-2">
-              <strong>Επιτελείο:</strong>
-              <ul className="list-disc list-inside text-gray-700 mt-1">
-                {dep.staff.map((member, idx) => (
-                  <li key={idx}>{member}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
+            <h2 className="text-2xl font-semibold mb-4 text-primary">{dep.name}</h2>
+            <dl className="space-y-2 text-sm md:text-base">
+              <div>
+                <dt className="font-medium text-muted-foreground">Ηλικίες</dt>
+                <dd>{dep.ages}</dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">Συγκεντρώσεις</dt>
+                <dd>{dep.schedule}</dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">Επιτελείο</dt>
+                <dd>
+                  <ul className="mt-1 list-disc list-inside space-y-0.5">
+                    {dep.staff.map((member, idx) => (
+                      <li key={idx}>{member}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            </dl>
+          </article>
         ))}
       </div>
 
-      {/* System Leaders */}
-      <div className="bg-gray-100 rounded-xl p-6 shadow-inner">
-        <h2 className="text-2xl font-semibold mb-2">
+      <section className="rounded-2xl border bg-muted/50 p-6 md:p-8">
+        <h2 className="text-xl font-semibold mb-4 md:text-2xl">
           Αρχηγός & Υπαρχηγοί Συστήματος
         </h2>
-        <ul className="list-disc list-inside text-gray-700 mt-1">
-          <li className="text-gray-800 mb-1">{systemLeaders.chief}</li>
-          <li className="text-gray-800">{systemLeaders.deputies.join(", ")}</li>
+        <ul className="space-y-2 text-muted-foreground">
+          <li>{systemLeaders.chief}</li>
+          <li>{systemLeaders.deputies.join(", ")}</li>
         </ul>
-      </div>
+      </section>
     </div>
   );
 }

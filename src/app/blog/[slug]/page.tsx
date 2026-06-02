@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Post, getPostBySlug, getAllPosts } from "@/lib/posts";
 import { Calendar, ChevronLeft, User } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import styles from "@/styles/post.module.css";
 
 interface PostPageProps {
@@ -16,7 +17,13 @@ export function generateStaticParams() {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const post: Post = await getPostBySlug(slug);
+
+  let post: Post;
+  try {
+    post = await getPostBySlug(slug);
+  } catch {
+    notFound();
+  }
 
   return (
     <>
@@ -27,10 +34,8 @@ export default async function PostPage({ params }: PostPageProps) {
         </Button>
       </Link>
       <main className="container mx-auto px-4 py-10">
-        {/* Title */}
         <h1 className="text-4xl font-bold mb-2">{post.title}</h1>
 
-        {/* Meta row: date, author, tags */}
         <div className="flex flex-wrap items-center gap-3 mb-8 text-sm text-gray-500">
           <span className="flex items-center gap-1">
             <Calendar className="h-4 w-4" /> {post.date.split("T")[0]}
@@ -47,7 +52,6 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </div>
 
-        {/* Markdown Content */}
         <article className={styles.article}>
           <div dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
         </article>

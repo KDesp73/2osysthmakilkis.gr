@@ -5,24 +5,25 @@ import { Post } from "@/lib/posts";
 import { Button } from "../ui/button";
 import { useToast } from "./ToastContext";
 import { useConfirm } from "./ConfirmContext";
+import { getPostsForAdmin } from "@/actions/admin/posts";
+import { deletePost } from "@/actions/admin/content";
 
 export default function PostRemover() {
   const { showToast } = useToast();
   const confirm = useConfirm();
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Omit<Post, "contentHtml">[]>([]);
 
   useEffect(() => {
     async function fetchPosts() {
-      const res = await fetch("/api/posts");
-      if (!res.ok) {
-        console.error("Failed to fetch posts");
-        return;
+      const result = await getPostsForAdmin();
+      if (result.success && "posts" in result) {
+        setPosts(result.posts);
+      } else {
+        console.error("Failed to fetch posts", result);
       }
-      const data = await res.json();
-      setPosts(data.posts as Post[]);
     }
-    fetchPosts();
+    void fetchPosts();
   }, []);
 
   const handleDelete = async (title: string) => {
@@ -30,27 +31,15 @@ export default function PostRemover() {
       title: "Delete?",
       message: `Are you sure you want to delete "${title}"?`,
       confirmText: "Delete",
-      cancelText: "Cancel"
+      cancelText: "Cancel",
     });
     if (!confirmed) return;
 
     try {
-      const res = await fetch("/api/admin/posts", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
-      });
-
-      // if (!res.ok) {
-      //     throw new Error("Network response was not ok");
-      // }
-
-      const resBody = await res.json();
-      console.log(resBody);
-      if (!resBody.success) {
-        throw new Error("Could not remove blog");
+      const result = await deletePost(title);
+      if (!result.success) {
+        throw new Error(result.error ?? "Could not remove blog");
       }
-
       setPosts((prev) => prev.filter((b) => b.title !== title));
     } catch (err) {
       console.error("Delete failed:", err);

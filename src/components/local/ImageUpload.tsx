@@ -138,7 +138,7 @@ export default function ImageManager() {
           const base64 = btoa(binary);
 
           return {
-            type: "image",
+            type: "image" as const,
             name: img.file!.name.replace(/\s+/g, "_"), // Sanitize filename
             collection: finalCollection,
             data: base64,
@@ -146,13 +146,11 @@ export default function ImageManager() {
         }),
       );
 
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: filesData }),
-      });
-
-      if (!res.ok) throw new Error((await res.json()).error);
+      const { uploadContent } = await import("@/lib/utils");
+      const uploadResult = await uploadContent(filesData);
+      if (!uploadResult.success) {
+        throw new Error(uploadResult.error ?? "Upload failed");
+      }
 
       showToast("Upload successful!", "success");
 
@@ -265,12 +263,12 @@ export default function ImageManager() {
     });
 
     // C. Reorder/Metadata Update: Always send the final list to rebuild metadata.json
-    const newMetadata = currentActiveImages.map((img) => ({
-      // Use the final path, whether original or new/moved
+    const newMetadata = currentActiveImages.map((img, index) => ({
       path: img.preview.startsWith("http")
         ? img.preview.replace("/content/images", "")
         : `/content/images/${img.collection}/${img.name}`,
       collection: img.collection,
+      index,
     }));
 
     if (
@@ -285,14 +283,12 @@ export default function ImageManager() {
     }
 
     try {
-      const res = await fetch("/api/admin/edit-images", {
-        // NEW dedicated endpoint
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ actions, newMetadata }),
-      });
-
-      if (!res.ok) throw new Error((await res.json()).error);
+      const { saveImagesMetadata } = await import("@/actions/admin/content");
+      const deleteActions = actions
+        .filter((a) => a.type === "delete" && a.path)
+        .map((a) => ({ type: "delete" as const, path: a.path! }));
+      const result = await saveImagesMetadata(deleteActions, newMetadata);
+      if (!result.success) throw new Error(result.error);
 
       showToast("Changes saved! Refreshing...", "success");
       window.location.reload(); // Full refresh to sync state

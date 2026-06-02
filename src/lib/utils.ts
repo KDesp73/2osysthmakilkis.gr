@@ -5,46 +5,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export interface UploadItem {
-  type: "blog" | "file" | "image";
-  title?: string;
-  description?: string;
-  author?: string;
-  tags?: string[];
-  content?: string;
-  name?: string; // filename
-  data?: string; // base64 string
-  collection?: string; // for images
-  path?: string;
-}
+export type { UploadItem } from "@/lib/admin/types";
+
+import type { UploadItem } from "@/lib/admin/types";
+import { uploadContent as uploadContentAction } from "@/actions/admin/content";
 
 /**
- * Upload one or more content items (blogs, files, images) to the backend.
- *
- * @param items - Array of UploadItem objects
- * @returns A success flag and optional error message
+ * Upload one or more content items (blogs, files, images) via Server Action.
  */
 export async function uploadContent(items: UploadItem[]) {
-  try {
-    const response = await fetch("/api/admin/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ items }),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || "Upload failed");
-    }
-
-    return { success: true };
-  } catch (err) {
-    console.error("[uploadContent] Error:", err);
-    return { success: false, error: (err as Error).message };
+  const result = await uploadContentAction(items);
+  if (!result.success) {
+    return { success: false as const, error: result.error ?? "Upload failed" };
   }
+  return { success: true as const };
 }
 
 function greekToLatin(str: string) {

@@ -38,14 +38,14 @@ export default function FilesPage() {
   return (
     <>
       <Title name="Αρχεία" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
         {files.map((file) => (
           <FileCard key={file.href} {...file} />
         ))}
       </div>
 
       <Title name="Σύνδεσμοι" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {links.map((linkItem) => (
           <LinkCard key={linkItem.href} {...linkItem} />
         ))}

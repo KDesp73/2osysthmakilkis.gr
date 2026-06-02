@@ -1,86 +1,60 @@
-import React from "react";
 import SocialButtons from "./SocialButtons";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Phone } from "lucide-react";
 import ContactLinks from "./ContactLinks";
+
+const quickLinks = [
+  { name: "Τμήματα", href: "/depts" },
+  { name: "Χρήσιμα", href: "/useful" },
+  { name: "Εικόνες", href: "/gallery" },
+  { name: "Blog", href: "/blog" },
+  { name: "Επικοινωνία", href: "/contact" },
+];
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-50 border-t border-gray-200 mt-16">
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* About */}
+    <footer className="mt-auto bg-primary text-primary-foreground">
+      <div className="h-1 w-full bg-secondary" aria-hidden />
+
+      <div className="site-container grid grid-cols-1 gap-10 py-12 md:grid-cols-3 md:py-16">
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800">
+          <h3 className="font-display text-xl font-bold">
             2ο Σύστημα Προσκόπων Κιλκίς
           </h3>
-          <p className="text-gray-600 text-sm">
+          <p className="text-sm leading-relaxed text-primary-foreground/80">
             Εδώ και 50 χρόνια είμαστε μια παρέα που μεγαλώνει, γελάει, εξερευνά,
-            παίζει και προσφέρει
+            παίζει και προσφέρει.
           </p>
           <SocialButtons />
         </div>
 
-        {/* Quick Links */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Γρήγοροι Σύνδεσμοι
+          <h3 className="font-display text-lg font-semibold text-secondary">
+            Γρήγοροι σύνδεσμοι
           </h3>
-          <ul className="space-y-2">
-            <li>
-              <Link
-                href="/depts"
-                className="text-gray-600 hover:text-[#f08e7f] transition-colors"
-              >
-                Τμήματα
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/useful"
-                className="text-gray-600 hover:text-[#f08e7f] transition-colors"
-              >
-                Χρήσιμα
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/gallery"
-                className="text-gray-600 hover:text-[#f08e7f] transition-colors"
-              >
-                Εικόνες
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/blog"
-                className="text-gray-600 hover:text-[#f08e7f] transition-colors"
-              >
-                Blog
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/contact"
-                className="text-gray-600 hover:text-[#f08e7f] transition-colors"
-              >
-                Επικοινωνία
-              </Link>
-            </li>
+          <ul className="space-y-2.5">
+            {quickLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="text-sm text-primary-foreground/75 transition-colors hover:text-secondary"
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Contact / Newsletter */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800">Επικοινωνία</h3>
-          <ContactLinks />
+          <h3 className="font-display text-lg font-semibold text-secondary">
+            Επικοινωνία
+          </h3>
+          <ContactLinks className="text-primary-foreground/80 [&_a]:text-inherit [&_a]:hover:text-secondary" />
         </div>
       </div>
 
-      {/* Bottom copyright */}
-      <div className="border-t border-gray-200 mt-8 py-4 text-center text-gray-500 text-sm select-none">
-        &copy; {new Date().getFullYear()} 2ο Σύστημα Προσκόπων Κιλκίς. All
-        rights reserved.
+      <div className="border-t border-primary-foreground/15 py-5 text-center text-sm text-primary-foreground/60">
+        &copy; {new Date().getFullYear()} 2ο Σύστημα Προσκόπων Κιλκίς
       </div>
     </footer>
   );

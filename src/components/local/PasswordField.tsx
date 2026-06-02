@@ -10,53 +10,63 @@ type PasswordFieldProps = {
   placeholder?: string;
   className?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  // whether to show a small strength indicator (simple heuristic)
   showStrength?: boolean;
 };
 
+function strengthScore(pw: string) {
+  let score = 0;
+  if (pw.length >= 8) score += 1;
+  if (/[A-Z]/.test(pw)) score += 1;
+  if (/[0-9]/.test(pw)) score += 1;
+  if (/[^A-Za-z0-9]/.test(pw)) score += 1;
+  return score;
+}
+
 export default function PasswordField({
+  id,
   name,
-  value = "",
+  value,
   placeholder = "Enter password",
   className = "",
   onChange,
   showStrength = false,
 }: PasswordFieldProps) {
-  const _id = useId();
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
   const [visible, setVisible] = useState(false);
+  const [internalValue, setInternalValue] = useState("");
 
-  const toggle = () => setVisible((v) => !v);
+  const isControlled = onChange !== undefined;
+  const strengthSource = isControlled ? (value ?? "") : internalValue;
+  const score = strengthScore(strengthSource);
 
-  // very simple strength heuristic (length + variety)
-  function strengthScore(pw: string) {
-    let score = 0;
-    if (pw.length >= 8) score += 1;
-    if (/[A-Z]/.test(pw)) score += 1;
-    if (/[0-9]/.test(pw)) score += 1;
-    if (/[^A-Za-z0-9]/.test(pw)) score += 1;
-    return score; // 0..4
-  }
-
-  const score = strengthScore(value ?? "");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) setInternalValue(e.target.value);
+    onChange?.(e);
+  };
 
   return (
     <div className={className}>
       <div className="relative">
         <Input
-          id={_id}
+          id={inputId}
           name={name}
           type={visible ? "text" : "password"}
-          value={value}
-          onChange={onChange}
           placeholder={placeholder}
-          className="pr-12" /* room for the toggle button */
-          aria-describedby={showStrength ? `${_id}-strength` : undefined}
+          className="pr-12"
+          aria-describedby={showStrength ? `${inputId}-strength` : undefined}
+          {...(isControlled
+            ? { value: value ?? "", onChange: handleChange }
+            : {
+                ...(value !== undefined ? { defaultValue: value } : {}),
+                ...(showStrength ? { onChange: handleChange } : {}),
+              })}
         />
 
         <Button
           type="button"
           variant="ghost"
-          onClick={toggle}
+          onClick={() => setVisible((v) => !v)}
           aria-pressed={visible}
           aria-label={visible ? "Hide password" : "Show password"}
           className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
@@ -70,12 +80,12 @@ export default function PasswordField({
       </div>
 
       {showStrength && (
-        <div id={`${_id}-strength`} className="mt-2">
+        <div id={`${inputId}-strength`} className="mt-2">
           <div className="flex items-center gap-2 text-sm">
             <div className="flex-1 h-2 bg-muted rounded overflow-hidden">
               <div
                 className={
-                  `h-2 rounded transition-all duration-150` +
+                  "h-2 rounded transition-all duration-150" +
                   (score === 0
                     ? " w-0"
                     : score === 1

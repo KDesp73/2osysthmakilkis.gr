@@ -1,13 +1,16 @@
 "use client";
 
 import ImageManager from "@/components/local/cms/ImageManager";
+import PageHeader from "@/components/local/PageHeader";
 
 export default function DashboardContent() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
-      <div className="flex-1">
-        <ImageManager />
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Εικόνες"
+        description="Ανέβασμα και οργάνωση συλλογών φωτογραφιών."
+      />
+      <ImageManager />
     </div>
   );
 }

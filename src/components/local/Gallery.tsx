@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import Title from "./Title";
+import PageTitle from "./PageTitle";
 import EmptyState from "./EmptyState";
 
 interface MetadataImage {
@@ -28,10 +28,10 @@ export default function Gallery({ collections }: Props) {
   if (!hasImages) {
     return (
       <>
-        <Title name="Gallery" />
+        <PageTitle title="Εικόνες" />
         <EmptyState
-          title="No images available"
-          description="There are currently no images to display."
+          title="Δεν υπάρχουν εικόνες"
+          description="Δεν υπάρχουν διαθέσιμες εικόνες αυτή τη στιγμή."
         />
       </>
     );
@@ -39,27 +39,29 @@ export default function Gallery({ collections }: Props) {
 
   return (
     <>
-      <Title name="Gallery" />
-      {collections
-        .map(({ name, date, images }) => (
+      <PageTitle
+        title="Εικόνες"
+        subtitle="Στιγμές από τις δράσεις και τις συγκεντρώσεις μας."
+      />
+      {collections.map(({ name, date, images }) => (
           <section key={name + date} className="mb-12">
             <h2 className="text-2xl font-semibold mb-1">{name}</h2>
-            <p className="text-sm text-gray-500 mb-4">{date}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <p className="text-sm text-muted-foreground mb-4">{date}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
               {images
                 .sort((a, b) => a.index - b.index)
                 .map((img) => (
                   <div
                     key={img.index}
-                    className="overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform cursor-pointer"
+                    className="overflow-hidden rounded-xl ring-1 ring-border shadow-sm hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer aspect-square relative"
                     onClick={() => setSelectedImage(img.path)}
                   >
                     <Image
                       src={img.path}
                       alt={`${name} - ${img.index}`}
-                      width={500}
-                      height={500}
-                      className="object-cover w-full h-full"
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover"
                     />
                   </div>
                 ))}
@@ -70,8 +72,10 @@ export default function Gallery({ collections }: Props) {
       {/* Modal / Lightbox */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
           onClick={() => setSelectedImage(null)}
+          role="dialog"
+          aria-modal
         >
           <Image
             src={selectedImage}

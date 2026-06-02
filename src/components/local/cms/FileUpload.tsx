@@ -63,7 +63,7 @@ export default function FileUpload() {
     try {
       const filesData = await Promise.all(
         files.map(async (f) => ({
-          type: "file",
+          type: "file" as const,
           name: f.file.name,
           title: f.name,
           description: f.description,
@@ -71,13 +71,8 @@ export default function FileUpload() {
         })),
       );
 
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: filesData }),
-      });
-
-      const data = await res.json();
+      const { uploadContent } = await import("@/lib/utils");
+      const data = await uploadContent(filesData);
       if (!data.success) throw new Error(data.error || "Upload failed");
 
       showToast("Upload successful!", "success");

@@ -1,33 +1,41 @@
+"use client";
+
 import { CommitHistoryItem } from "@/lib/GithubHelper";
 import { Github } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getGitHistory } from "@/actions/admin/git";
 
 export default function GitHistory() {
   const [history, setHistory] = useState<CommitHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(10);
 
-  const fetchHistory = async (commitCount: number) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        path: "",
-        count: commitCount.toString(),
-      });
-
-      const res = await fetch(`/api/admin/git-history?${params.toString()}`);
-      const commits = (await res.json()) as CommitHistoryItem[];
-      setHistory(commits);
-    } catch (err) {
-      console.error("Failed to fetch git history", err);
-      setHistory([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchHistory(count);
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      try {
+        const result = await getGitHistory("", count);
+        if (!cancelled) {
+          if (result.success && "commits" in result) {
+            setHistory(result.commits);
+          } else {
+            setHistory([]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch git history", err);
+        if (!cancelled) setHistory([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
   }, [count]);
 
   return (
@@ -45,7 +53,7 @@ export default function GitHistory() {
             min={1}
             max={100}
             value={count}
-            onChange={(e) => setCount(parseInt(e.target.value, 10))}
+            onChange={(e) => setCount(parseInt(e.target.value, 10) || 10)}
             className="border rounded px-2 py-1 w-16"
           />
         </div>
@@ -71,7 +79,10 @@ export default function GitHistory() {
                 {c.message}
               </a>
               <p className="text-sm text-gray-500">
-                {c.author.name} • {new Date(c.committer.date!).toLocaleString()}
+                {c.author.name} •{" "}
+                {c.committer.date
+                  ? new Date(c.committer.date).toLocaleString()
+                  : ""}
               </p>
               <p className="text-xs text-gray-400 truncate">{c.sha}</p>
             </li>

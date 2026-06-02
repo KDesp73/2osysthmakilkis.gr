@@ -11,8 +11,7 @@ export default function NotFound() {
         alt="bepanthol"
         width={800}
         height={600}
-      >
-      </Image>
+      />
       <Link href="/" className="mt-6 text-blue-600 underline">
         Επέστρεψε στην Αρχική
       </Link>

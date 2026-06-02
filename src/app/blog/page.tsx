@@ -9,10 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, User } from "lucide-react";
-import Title from "@/components/local/Title";
+import PageTitle from "@/components/local/PageTitle";
 import { Badge } from "@/components/ui/badge";
-import { filter } from "@mdxeditor/editor";
-
 export default async function BlogPage({
   searchParams,
 }: {
@@ -35,9 +33,11 @@ export default async function BlogPage({
 
   return (
     <>
-      <Title name="To blog μας" />
+      <PageTitle
+        title="Το blog μας"
+        subtitle="Νέα, δράσεις και στιγμές από το σύστημά μας."
+      />
 
-      {/* Tag Filter Bar */}
       <div className="flex flex-wrap gap-2 mb-4">
         <Link href={author ? `/blog?author=${author}` : "/blog"}>
           <Badge variant={tag ? "outline" : "default"}>All Tags</Badge>
@@ -76,16 +76,18 @@ export default async function BlogPage({
         })}
       </div>
 
-      <div className="text-slate-800 text-xl mb-4">
-        <span className="text-green-800 text-2xl">{filteredPosts.length}</span> posts
-      </div>
+      <p className="text-muted-foreground mb-6">
+        <span className="text-2xl font-semibold text-primary">
+          {filteredPosts.length}
+        </span>{" "}
+        {filteredPosts.length === 1 ? "άρθρο" : "άρθρα"}
+      </p>
 
-      {/* Blog Posts */}
-      <div className="grid gap-8">
+      <div className="grid gap-6 md:gap-8">
         {filteredPosts.map((post) => (
           <Card
             key={post.slug}
-            className="hover:shadow-lg transition-shadow"
+            className="overflow-hidden transition-all hover:shadow-md hover:border-primary/20"
           >
             <CardHeader>
               <CardTitle className="flex flex-col gap-1">

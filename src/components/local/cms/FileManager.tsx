@@ -50,7 +50,7 @@ export default function FileManager() {
     setIsSaving(true);
 
     const actions = pathsToDelete.map((filename) => ({
-      type: "delete",
+      type: "delete" as const,
       path: `public/content/files/${filename}`,
     }));
 
@@ -61,13 +61,11 @@ export default function FileManager() {
     }));
 
     try {
-      const res = await fetch("/api/admin/edit-files", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ actions, newMetadata: newFileMetadata }),
-      });
-
-      if (!res.ok) throw new Error((await res.json()).error || "Unknown error");
+      const { saveFilesMetadata } = await import("@/actions/admin/content");
+      const result = await saveFilesMetadata(actions, newFileMetadata);
+      if (!result.success) {
+        throw new Error(result.error || "Unknown error");
+      }
       window.location.reload();
     } catch (err) {
       console.error("Save failed:", (err as Error).message);
@@ -86,7 +84,7 @@ export default function FileManager() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       <Tabs defaultValue="manage" className="w-full">
         <TabsList className="grid w-full grid-cols-2 rounded-lg bg-muted p-1">
           <TabsTrigger value="upload">Upload</TabsTrigger>

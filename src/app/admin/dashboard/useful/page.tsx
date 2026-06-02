@@ -1,5 +1,6 @@
 import FileCard from "@/components/local/FileCard";
 import LinkCard from "@/components/local/LinkCard";
+import PageHeader from "@/components/local/PageHeader";
 
 interface ResourceItem {
   name: string;
@@ -17,16 +18,16 @@ export default function DashboardUseful() {
     {
       name: "2η Ομάδα",
       description: "Google Drive",
-      href: "https://drive.google.com/drive/folders/1jvuLRoaTdhAizOuXmyaO1d8E728-OdqZ"
+      href: "https://drive.google.com/drive/folders/1jvuLRoaTdhAizOuXmyaO1d8E728-OdqZ",
     },
     {
       name: "Ονομαστική Κατάσταση Συστήματος",
-      description: "",
+      description: "Google Sheets",
       href: "https://docs.google.com/spreadsheets/d/1NafMecUgSjX426n4YWxJXKmGbzJQnOcUj855VFdxnaE/edit?gid=0#gid=0",
     },
     {
       name: "Φωτογραφίες Συστήματος",
-      description: "",
+      description: "Google Drive",
       href: "https://drive.google.com/drive/u/3/folders/14dzXD8R6LLkII-g7N0l7CrNhe6_j_o_Y",
     },
     {
@@ -38,38 +39,41 @@ export default function DashboardUseful() {
     {
       name: "Νέο Πρόγραμμα",
       description: "Drive με αρχεία για το νέο πρόγραμμα",
-      href: "https://drive.google.com/drive/folders/167Wwxl-t-fZGH6EsIExfq0fT5t5pAUDU"
+      href: "https://drive.google.com/drive/folders/167Wwxl-t-fZGH6EsIExfq0fT5t5pAUDU",
     },
   ];
 
   const files: ResourceItem[] = [];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-10 px-4">
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Αρχεία</h2>
+    <div className="space-y-8">
+      <PageHeader
+        title="Χρήσιμοι σύνδεσμοι"
+        description="Σύνδεσμοι προς εξωτερικούς πόρους για την ομάδα."
+      />
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold">Αρχεία</h2>
         {files.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {files.map((file) => (
               <FileCard key={file.href} {...file} />
             ))}
           </div>
         ) : (
-          <p className="text-gray-500">Δεν υπάρχουν διαθέσιμα αρχεία.</p>
+          <p className="text-sm text-muted-foreground rounded-lg border border-dashed p-8 text-center">
+            Δεν υπάρχουν διαθέσιμα αρχεία.
+          </p>
         )}
       </section>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Σύνδεσμοι</h2>
-        {links.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {links.map((link) => (
-              <LinkCard key={link.href} {...link} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500">Δεν υπάρχουν σύνδεσμοι.</p>
-        )}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold">Σύνδεσμοι</h2>
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {links.map((link) => (
+            <LinkCard key={link.href} {...link} />
+          ))}
+        </div>
       </section>
     </div>
   );

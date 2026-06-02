@@ -1,28 +1,27 @@
 "use client";
 
 import ChangePasswordForm from "@/components/local/ChangePasswordForm";
-import Loading from "@/components/local/Loading";
 import UserManager from "@/components/local/UserManager";
-import { useAuthUser } from "@/hooks/useAuthUser";
+import PageHeader from "@/components/local/PageHeader";
+import AdminPanel from "@/components/local/AdminPanel";
+import { useAdminUser } from "@/contexts/AdminUserContext";
 
 export default function DashboardSettings() {
-  const { user, loading } = useAuthUser();
-
-  if (loading) return <Loading />;
-
-  const username = user?.username;
+  const user = useAdminUser();
 
   return (
-    <>
-      {username === "admin" ? (
-        <>
-          <UserManager />
-        </>
-      ) : (
-        <>
-          <ChangePasswordForm />
-        </>
-      )}
-    </>
+    <div className="space-y-6">
+      <PageHeader
+        title="Ρυθμίσεις"
+        description={
+          user.role === "admin"
+            ? "Διαχείριση χρηστών και λογαριασμού."
+            : "Αλλαγή κωδικού πρόσβασης."
+        }
+      />
+      <AdminPanel>
+        {user.role === "admin" ? <UserManager /> : <ChangePasswordForm />}
+      </AdminPanel>
+    </div>
   );
 }

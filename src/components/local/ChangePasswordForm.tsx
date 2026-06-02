@@ -1,17 +1,19 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+
+import { useState, useTransition } from "react";
 import PasswordField from "@/components/local/PasswordField";
 import { Button } from "../ui/button";
+import { changePassword } from "@/actions/admin/password";
+import { logout } from "@/actions/auth";
 
 export default function ChangePasswordForm() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
@@ -19,19 +21,14 @@ export default function ChangePasswordForm() {
       return;
     }
 
-    const res = await fetch("/api/admin/change-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ oldPassword, newPassword }),
+    startTransition(async () => {
+      const data = await changePassword(oldPassword, newPassword);
+      if (data.success) {
+        await logout();
+      } else {
+        setMessage(data.error ?? "Something went wrong");
+      }
     });
-
-    const data = await res.json();
-    if (res.ok && data.success) {
-      await fetch("/api/admin/logout", { method: "POST" });
-      router.push("/admin/login");
-    } else {
-      setMessage(data.message || data.error);
-    }
   };
 
   return (
@@ -58,7 +55,9 @@ export default function ChangePasswordForm() {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
-      <Button type="submit">Change Password</Button>
+      <Button type="submit" disabled={isPending}>
+        {isPending ? "Saving..." : "Change Password"}
+      </Button>
       {message && <p className="text-sm mt-2">{message}</p>}
     </form>
   );

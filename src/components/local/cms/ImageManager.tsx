@@ -123,7 +123,7 @@ export default function ImageManager() {
           const base64 = btoa(binary);
 
           return {
-            type: "image",
+            type: "image" as const,
             name: img.file!.name.replace(/\s+/g, "_"),
             collection: finalCollection,
             data: base64,
@@ -131,13 +131,11 @@ export default function ImageManager() {
         }),
       );
 
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: filesData }),
-      });
-
-      if (!res.ok) throw new Error((await res.json()).error);
+      const { uploadContent } = await import("@/lib/utils");
+      const uploadResult = await uploadContent(filesData);
+      if (!uploadResult.success) {
+        throw new Error(uploadResult.error ?? "Upload failed");
+      }
 
       console.log("Upload successful! Refreshing...");
 
@@ -242,14 +240,12 @@ export default function ImageManager() {
     // --- CONSOLIDATED API CALL ---
     // Pass ALL actions (now only delete) and metadata to the edit-images endpoint.
     try {
-      const res = await fetch("/api/admin/edit-images", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Pass the full actions array
-        body: JSON.stringify({ actions: actions, newMetadata }),
-      });
-
-      if (!res.ok) throw new Error((await res.json()).error);
+      const { saveImagesMetadata } = await import("@/actions/admin/content");
+      const result = await saveImagesMetadata(
+        actions as { type: "delete"; path: string }[],
+        newMetadata,
+      );
+      if (!result.success) throw new Error(result.error);
 
       console.log("Changes saved! Refreshing...");
       window.location.reload();
@@ -266,7 +262,7 @@ export default function ImageManager() {
   const activeImages = images.filter((img) => !img.isDeleted);
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       <Tabs defaultValue="manage" className="w-full">
         <TabsList className="grid w-full grid-cols-2 rounded-lg bg-muted p-1">
           <TabsTrigger value="upload">Upload</TabsTrigger>

@@ -178,60 +178,55 @@ export class GithubHelper {
     });
   }
 
+  /** Normalize repo-relative paths (no leading slash). */
+  private normalizeRepoPath(path: string): string {
+    const normalized = path.replace(/^\/+/, "");
+    if (!normalized.startsWith("public/")) {
+      throw new Error(`Invalid repository path: ${path}`);
+    }
+    return normalized;
+  }
+
   /**
-   * Removes one or more files in a single commit.
-   * @param paths An array of file paths to remove.
-   * @param commitMsg The message for the commit.
-   * @returns The response from updating the ref.
+   * Removes one or more files via the Contents API (one commit per file).
    */
   async remove(paths: string[], commitMsg: string) {
     if (!paths.length) throw new Error("No files specified");
 
-    // 1. Get the latest commit SHA and its tree SHA (same steps as upload)
-    const latest = await this.octokit.git.getRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `heads/${this.branch}`,
-    });
-    const latestCommitSha = latest.data.object.sha;
+    const normalizedPaths = [...new Set(paths.map((p) => this.normalizeRepoPath(p)))];
+    let lastResponse: Awaited<
+      ReturnType<typeof this.octokit.repos.deleteFile>
+    > | null = null;
 
-    const commit = await this.octokit.git.getCommit({
-      owner: this.owner,
-      repo: this.repo,
-      commit_sha: latestCommitSha,
-    });
+    for (let i = 0; i < normalizedPaths.length; i++) {
+      const path = normalizedPaths[i];
+      const { data } = await this.octokit.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path,
+        ref: this.branch,
+      });
 
-    // 2. Create a new Tree, based on the latest commit's tree, removing files
-    // To remove a file, you set its SHA to null.
-    const tree = await this.octokit.git.createTree({
-      owner: this.owner,
-      repo: this.repo,
-      base_tree: commit.data.tree.sha,
-      tree: paths.map((p) => ({
-        path: p,
-        // mode and type are still required but the key is sha: null
-        mode: "100644" as const,
-        type: "blob" as const,
-        sha: null, // This is what marks a file for deletion
-      })),
-    });
+      if (Array.isArray(data) || !("sha" in data)) {
+        throw new Error(`Path is not a file: ${path}`);
+      }
 
-    // 3. Create a new Commit, pointing to the new Tree
-    const newCommit = await this.octokit.git.createCommit({
-      owner: this.owner,
-      repo: this.repo,
-      message: commitMsg,
-      tree: tree.data.sha,
-      parents: [latestCommitSha],
-    });
+      const message =
+        normalizedPaths.length === 1
+          ? commitMsg
+          : `${commitMsg} (${i + 1}/${normalizedPaths.length})`;
 
-    // 4. Update the branch's reference to point to the new commit
-    return this.octokit.git.updateRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `heads/${this.branch}`,
-      sha: newCommit.data.sha,
-    });
+      lastResponse = await this.octokit.repos.deleteFile({
+        owner: this.owner,
+        repo: this.repo,
+        path,
+        message,
+        sha: data.sha,
+        branch: this.branch,
+      });
+    }
+
+    return lastResponse!;
   }
 
   /**

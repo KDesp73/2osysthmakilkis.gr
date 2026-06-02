@@ -102,7 +102,7 @@ export default function PostEditor() {
     setUploading(true);
     e.preventDefault();
     const payload = {
-      type: "blog",
+      type: "blog" as const,
       ...blogData,
       tags: blogData.tags
         .split(",")
@@ -111,13 +111,8 @@ export default function PostEditor() {
     };
 
     try {
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: [payload] }),
-      });
-
-      const data = await res.json();
+      const { uploadContent } = await import("@/lib/utils");
+      const data = await uploadContent([payload]);
       setUploading(false);
       setMessage(
         data.success ? "Blog created successfully!" : "Error creating blog",
