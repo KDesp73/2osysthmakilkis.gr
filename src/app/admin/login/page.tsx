@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import PasswordField from "@/components/local/PasswordField";
+import SiteLogo from "@/components/local/SiteLogo";
 import { login, type LoginState } from "@/actions/auth";
 import { Shield } from "lucide-react";
 
@@ -32,20 +33,16 @@ export default function AdminLogin() {
           alt=""
           fill
           priority
+          unoptimized
           className="object-cover opacity-25"
           sizes="50vw"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-primary/80" />
 
         <div className="relative z-10">
-          <Image
-            src="/logo.webp"
-            alt="2ο Σύστημα Προσκόπων Κιλκίς"
-            width={200}
-            height={151}
-            priority
-            className="h-auto w-[200px] brightness-0 invert"
-          />
+          <div className="inline-block rounded-lg bg-white px-3 py-2.5 shadow-md">
+            <SiteLogo width={200} unoptimized priority />
+          </div>
         </div>
 
         <div className="relative z-10 space-y-4 max-w-md">
@@ -70,14 +67,7 @@ export default function AdminLogin() {
       <div className="flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 bg-background">
         <div className="mx-auto w-full max-w-sm space-y-8">
           <div className="lg:hidden text-center space-y-4">
-            <Image
-              src="/logo.webp"
-              alt="2ο Σύστημα"
-              width={160}
-              height={121}
-              priority
-              className="mx-auto h-auto w-[160px]"
-            />
+            <SiteLogo width={160} priority className="mx-auto" />
             <Link
               href="/"
               className="text-sm text-muted-foreground hover:text-primary"

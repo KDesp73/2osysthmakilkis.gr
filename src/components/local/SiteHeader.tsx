@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import SiteLogo from "@/components/local/SiteLogo";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
@@ -73,13 +73,7 @@ export default function SiteHeader() {
             href="/"
             className="flex shrink-0 items-center rounded-md outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <Image
-              src="/logo.webp"
-              alt={siteTitle}
-              width={160}
-              height={40}
-              priority
-            />
+            <SiteLogo width={160} priority />
           </Link>
 
           <nav
@@ -152,16 +146,16 @@ export default function SiteHeader() {
                 className="flex w-[min(100vw-1rem,22rem)] flex-col gap-0 p-0 border-l-primary/20"
               >
                 <div className="scout-topbar h-1 w-full" />
-                <div className="border-b border-border bg-primary px-5 py-5 pr-12 text-primary-foreground">
+                <div className="border-b border-border bg-primary px-5 py-5 pr-12">
                   <SheetTitle className="sr-only">Μενού πλοήγησης</SheetTitle>
-                  <Link href="/" onClick={() => setMenuOpen(false)}>
-                    <Image
-                      src="/logo.webp"
-                      alt={siteTitle}
-                      width={160}
-                      height={40}
-                      className="brightness-0 invert"
-                    />
+                  <Link
+                    href="/"
+                    onClick={() => setMenuOpen(false)}
+                    className="inline-block rounded-lg bg-white px-3 py-2.5 shadow-sm"
+                  >
+                    {menuOpen ? (
+                      <SiteLogo width={160} unoptimized priority />
+                    ) : null}
                   </Link>
                 </div>
 

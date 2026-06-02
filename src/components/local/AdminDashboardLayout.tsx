@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import SiteLogo from "@/components/local/SiteLogo";
 import { usePathname } from "next/navigation";
 import {
   ChevronRight,
@@ -94,12 +95,10 @@ export default function AdminDashboardLayout({ children, user }: Props) {
           className="flex items-center gap-2 min-w-0"
           onClick={closeMobileSidebar}
         >
-          <Image
-            src="/logo.webp"
-            alt="2ο Σύστημα"
+          <SiteLogo
             width={120}
-            height={32}
-            className={cn("h-8 w-auto", sidebarCollapsed && "lg:hidden")}
+            unoptimized
+            className={cn("!h-8 !w-auto", sidebarCollapsed && "lg:hidden")}
           />
           {sidebarCollapsed && (
             <span className="hidden lg:inline text-xs font-bold text-sidebar-primary">
