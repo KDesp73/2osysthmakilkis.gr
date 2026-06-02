@@ -73,7 +73,8 @@ export default function SiteHeader() {
             href="/"
             className="flex shrink-0 items-center rounded-md outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <SiteLogo width={160} priority />
+            <SiteLogo width={120} priority className="sm:hidden" />
+            <SiteLogo width={160} priority className="hidden sm:block" />
           </Link>
 
           <nav

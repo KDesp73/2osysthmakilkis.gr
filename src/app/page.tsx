@@ -35,7 +35,7 @@ export default function Home() {
     <div className="flex flex-col">
       {/* Full-bleed hero */}
       <section className="relative w-full overflow-hidden">
-        <div className="relative aspect-[4/3] w-full sm:aspect-[16/9] lg:aspect-[21/9] lg:max-h-[520px]">
+        <div className="relative min-h-[32rem] w-full aspect-[4/3] sm:min-h-0 sm:aspect-[16/9] lg:aspect-[21/9] lg:max-h-[520px]">
           <img
             src="/banner.jpg"
             alt="Δράσεις του 2ου Συστήματος Προσκόπων Κιλκίς"
@@ -51,9 +51,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-12 pt-24 text-center sm:px-8 sm:pb-16 md:pb-20"
+            className="absolute inset-x-0 bottom-0 top-32 flex flex-col items-center justify-end px-4 pb-10 text-center sm:top-36 sm:px-8 sm:pb-16 md:pb-20"
           >
-            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/20 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground backdrop-blur-sm">
+            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/20 px-4 py-1 text-xs font-semibold tracking-wide text-primary-foreground backdrop-blur-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-secondary" aria-hidden />
               2ο Σύστημα Προσκόπων Κιλκίς
             </span>
